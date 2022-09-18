@@ -1,10 +1,24 @@
+import { useEffect, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import * as Checkbox from '@radix-ui/react-checkbox';
 
 import { Check, GameController } from 'phosphor-react';
 import { Input } from './Form/input';
 
+interface Game {
+  id: string;
+  title: string;
+}
+
 export function CreateAdModal() {
+  const [games, setGame] = useState<Game[]>([])
+
+  useEffect(() => {
+    fetch('http://localhost:3333/games')
+      .then(response => response.json())
+      .then(data => setGame(data))
+  }, [])
+
   return (
 
     <Dialog.Portal>
@@ -16,12 +30,16 @@ export function CreateAdModal() {
         <form className='mt-8 flex flex-col gap-4'>
           <div className='flex flex-col gap-2'>
             <label htmlFor="game" className='font-semibold'>Qual o game?</label>
-            <Input
-              type="text"
+            <select
               name="game"
               id="game"
-              placeholder='Selecione o game que deseja jogar'
-            />
+              className="bg-zinc-900 py-3 px-4 rounded text-sm placeholder:text-zinc-500 appearance-none"
+            >
+              <option value="" selected disabled>Selecione o game que deseja jogar</option>
+              {games.map((game) => {
+                return (<option key={game.id} value={game.id} >{game.title}</option>)
+              })}
+            </select>
 
           </div>
 
