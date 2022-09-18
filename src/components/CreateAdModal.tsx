@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
+import axios from 'axios';
 
 import * as Dialog from '@radix-ui/react-dialog';
 import * as Checkbox from '@radix-ui/react-checkbox';
@@ -15,12 +16,22 @@ interface Game {
 export function CreateAdModal() {
   const [games, setGame] = useState<Game[]>([])
   const [weekDays, setWeekDays] = useState<string[]>([])
+  const [yearPlaying, setYearPlaying] = useState(false)
 
   useEffect(() => {
-    fetch('http://localhost:3333/games')
-      .then(response => response.json())
-      .then(data => setGame(data))
+    axios('http://localhost:3333/games')
+      .then(response => setGame(response.data))
   }, [])
+
+  function handleCreateAd(event: FormEvent) {
+    event.preventDefault();
+
+    const formData = new FormData(event.target as HTMLFormElement);
+    const data = Object.fromEntries(formData)
+
+
+    console.log(data, yearPlaying)
+  }
 
   return (
 
@@ -30,7 +41,7 @@ export function CreateAdModal() {
       <Dialog.Content className='fixed bg-[#2a2634] py-8 px-10 text-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg w-[480px] shadow-black/25 shadow-lg'>
         <Dialog.Title className='text-3xl font-black'> Publicar um Anúncio</Dialog.Title>
 
-        <form className='mt-8 flex flex-col gap-4'>
+        <form onSubmit={handleCreateAd} className='mt-8 flex flex-col gap-4'>
           <div className='flex flex-col gap-2'>
             <label htmlFor="game" className='font-semibold'>Qual o game?</label>
             <select
@@ -128,8 +139,6 @@ export function CreateAdModal() {
                   className={`w-8 h-8 rounded ${weekDays.includes('6') ? 'bg-violet-500' : 'bg-zinc-900'}`}
                 >S</ToggleGroup.Item>
               </ToggleGroup.Root>
-              {/* <div className='grid grid-cols-4 gap-2'> */}
-              {/* </div> */}
             </div>
 
             <div className='flex flex-col gap-2 flex-1'>
@@ -151,7 +160,11 @@ export function CreateAdModal() {
           </div>
 
           <label className='mt-2 gap-2 items-center text-sm'>
-            <Checkbox.Root className='w-6 h-6 p-1 mr-1 rounded bg-zinc-900'>
+            <Checkbox.Root
+              onCheckedChange={(checked) => {
+                setYearPlaying(!yearPlaying);
+              }}
+              className='w-6 h-6 p-1 mr-1 rounded bg-zinc-900'>
               <Checkbox.Indicator>
                 <Check
                   className='w-4-h-4 text-emerald-400'
@@ -177,7 +190,6 @@ export function CreateAdModal() {
         </form>
 
       </Dialog.Content>
-
     </Dialog.Portal>
   )
 }

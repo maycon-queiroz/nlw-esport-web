@@ -1,4 +1,5 @@
 
+import axios from 'axios';
 import { useState, useEffect } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 
@@ -7,8 +8,7 @@ import LogoImage from './assets/logo-nlw-esports.svg'
 import { GameBanner } from './components/GameBanner';
 import { CreateAdBanner } from './components/CreateAdBanner';
 import { CreateAdModal } from './components/CreateAdModal';
-import { GameController } from 'phosphor-react';
-import { Input } from './components/Form/input';
+
 
 interface Game {
   bannerUrl: string;
@@ -23,9 +23,8 @@ function App() {
   const [games, setGame] = useState<Game[]>([])
 
   useEffect(() => {
-    fetch('http://localhost:3333/games')
-      .then(response => response.json())
-      .then(data => setGame(data))
+    axios('http://localhost:3333/games')
+      .then(response => setGame(response.data))
   }, [])
 
   return (
