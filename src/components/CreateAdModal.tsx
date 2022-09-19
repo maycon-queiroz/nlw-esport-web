@@ -23,14 +23,32 @@ export function CreateAdModal() {
       .then(response => setGame(response.data))
   }, [])
 
-  function handleCreateAd(event: FormEvent) {
+  async function handleCreateAd(event: FormEvent) {
     event.preventDefault();
 
     const formData = new FormData(event.target as HTMLFormElement);
-    const data = Object.fromEntries(formData)
+    const data = Object.fromEntries(formData);
 
+    if (!data.name) {
+      return;
+    }
 
-    console.log(data, yearPlaying)
+    try {
+      axios.post(`http://localhost:3333/games/${data.game}/ads`, {
+        name: data.name,
+        hourStart: data.hourStart,
+        hourEnd: data.hourEnd,
+        yearsPlaying: Number(data.yearsPlaying),
+        weekDays: weekDays.map(Number),
+        discord: data.discord,
+        useVoiceChannel: useVoiceChannel,
+      })
+
+      alert('Anúncio Criado com sucesso')
+    } catch (error) {
+      console.log(error)
+      alert('Error ao tentar Criar Anúncio')
+    }
   }
 
   return (
@@ -69,11 +87,11 @@ export function CreateAdModal() {
 
           <div className='grid grid-cols-2 gap-4'>
             <div className='flex flex-col gap-2'>
-              <label htmlFor="yearPlaying">Joga há quantos anos?</label>
+              <label htmlFor="yearsPlaying">Joga há quantos anos?</label>
               <Input
                 type="number"
-                name="yearPlaying"
-                id="yearPlaying"
+                name="yearsPlaying"
+                id="yearsPlaying"
                 placeholder='Tudo bem ser ZERO'
               />
             </div>
