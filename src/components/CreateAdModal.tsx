@@ -16,7 +16,7 @@ interface Game {
 export function CreateAdModal() {
   const [games, setGame] = useState<Game[]>([])
   const [weekDays, setWeekDays] = useState<string[]>([])
-  const [yearPlaying, setYearPlaying] = useState(false)
+  const [useVoiceChannel, setUseVoiceChannel] = useState(false)
 
   useEffect(() => {
     axios('http://localhost:3333/games')
@@ -162,7 +162,7 @@ export function CreateAdModal() {
           <label className='mt-2 gap-2 items-center text-sm'>
             <Checkbox.Root
               onCheckedChange={(checked) => {
-                setYearPlaying(!yearPlaying);
+                setUseVoiceChannel(!useVoiceChannel);
               }}
               className='w-6 h-6 p-1 mr-1 rounded bg-zinc-900'>
               <Checkbox.Indicator>
